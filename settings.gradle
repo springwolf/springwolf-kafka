@@ -1,0 +1,4 @@
+rootProject.name = 'springwolf-kafka'
+
+include 'springwolf-kafka-plugin', 'springwolf-kafka-example'
+
