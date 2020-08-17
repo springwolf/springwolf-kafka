@@ -3,7 +3,7 @@
 ### Run with docker compose (recommended)
 1. Copy the `docker-compose.yml` file to your machine.
 2. Run `$ docker-compose up`.
-3. Visit `localhost:8080/asyncapi-ui.html` or try the API: `$ curl localhost:8080/kafka-api/endpoints`.
+3. Visit `localhost:8080/asyncapi-ui.html` or try the API: `$ curl localhost:8080/asyncapi/docs`.
 
 ### Run with gradle
 1. Verify zookeeper and kafka are running.
