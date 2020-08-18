@@ -1,13 +1,11 @@
 package io.github.stavshamir.springwolf.asyncapi.scanners.channels;
 
 import com.google.common.collect.ImmutableMap;
-import io.github.stavshamir.springwolf.asyncapi.scanners.components.ComponentsScanner;
 import io.github.stavshamir.springwolf.asyncapi.types.channel.operation.bindings.OperationBinding;
 import io.github.stavshamir.springwolf.asyncapi.types.channel.operation.bindings.kafka.KafkaOperationBinding;
 import io.github.stavshamir.springwolf.configuration.KafkaProtocolConfiguration;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.EmbeddedValueResolverAware;
 import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.stereotype.Service;
@@ -16,7 +14,6 @@ import org.springframework.util.StringValueResolver;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 import static java.util.stream.Collectors.toList;
 
@@ -27,7 +24,6 @@ public class KafkaChannelsScanner extends AbstractChannelScanner<KafkaListener>
         implements ChannelsScanner, EmbeddedValueResolverAware {
 
     private final KafkaProtocolConfiguration kafkaProtocolConfiguration;
-    private final ComponentsScanner componentsScanner;
 
     private StringValueResolver resolver;
 
@@ -37,9 +33,8 @@ public class KafkaChannelsScanner extends AbstractChannelScanner<KafkaListener>
     }
 
     @Override
-    protected Set<Class<?>> getClassesToScan() {
-        String basePackage = kafkaProtocolConfiguration.getBasePackage();
-        return componentsScanner.scanForComponents(basePackage);
+    protected String getBasePackage() {
+        return kafkaProtocolConfiguration.getBasePackage();
     }
 
     @Override
