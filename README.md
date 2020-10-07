@@ -84,4 +84,4 @@ If not, try the following endpoint: `localhost:8080/asyncapi/docs`.
 
 
 ### Example Project
-See [springwolf-kafka-example](https://github.com/springwolf/springwolf-kafka/springwolf-kafka-example).
+See [springwolf-kafka-example](https://github.com/springwolf/springwolf-kafka/tree/master/springwolf-kafka-example).
