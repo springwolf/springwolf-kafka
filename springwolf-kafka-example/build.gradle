@@ -11,6 +11,13 @@ version '0.1.0'
 
 
 repositories {
+    // For local development with snapshots
+    mavenLocal() {
+        content {
+            includeGroup "io.github.stavshamir"
+        }
+    }
+
     mavenCentral()
     jcenter()
 }
