@@ -54,7 +54,7 @@ public class KafkaChannelsScanner extends AbstractChannelScanner<KafkaListener>
 
     @Override
     protected Map<String, ? extends OperationBinding> buildOperationBinding(KafkaListener annotation) {
-        String groupId = annotation.groupId();
+        String groupId = resolver.resolveStringValue(annotation.groupId());
 
         if (groupId.isEmpty()) {
             log.debug("No group ID found for this listener");
