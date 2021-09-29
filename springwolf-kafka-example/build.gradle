@@ -23,7 +23,7 @@ repositories {
 
 dependencies {
     implementation project(":springwolf-kafka-plugin")
-    runtimeOnly 'io.github.stavshamir:springwolf-ui:0.1.0'
+    runtimeOnly 'io.github.springwolf:springwolf-ui:0.1.1'
 
     implementation 'org.springframework.boot:spring-boot-starter-web'
     implementation 'org.springframework.kafka:spring-kafka'

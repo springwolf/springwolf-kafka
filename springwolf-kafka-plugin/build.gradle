@@ -9,8 +9,8 @@ plugins {
     id 'io.spring.dependency-management' version '1.0.6.RELEASE'
 }
 
-group 'io.github.stavshamir'
-version '0.1.0'
+group 'io.github.springwolf'
+version '0.1.1'
 sourceCompatibility = 1.8
 
 repositories {
@@ -22,11 +22,10 @@ repositories {
     }
 
     mavenCentral()
-    jcenter()
 }
 
 dependencies {
-    api 'io.github.stavshamir:springwolf-core:0.1.1'
+    api 'io.github.springwolf:springwolf-core:0.2.0'
 
     implementation 'org.springframework:spring-web'
     implementation 'org.springframework.kafka:spring-kafka'

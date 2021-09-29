@@ -4,24 +4,30 @@ import com.google.common.collect.ImmutableMap;
 import io.github.stavshamir.springwolf.example.dtos.AnotherPayloadDto;
 import io.github.stavshamir.springwolf.example.dtos.ExamplePayloadDto;
 import org.apache.kafka.clients.consumer.ConsumerConfig;
+import org.apache.kafka.clients.producer.ProducerConfig;
 import org.apache.kafka.common.serialization.StringDeserializer;
+import org.apache.kafka.common.serialization.StringSerializer;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.kafka.annotation.EnableKafka;
 import org.springframework.kafka.config.ConcurrentKafkaListenerContainerFactory;
 import org.springframework.kafka.core.DefaultKafkaConsumerFactory;
+import org.springframework.kafka.core.DefaultKafkaProducerFactory;
+import org.springframework.kafka.core.KafkaTemplate;
+import org.springframework.kafka.core.ProducerFactory;
 import org.springframework.kafka.support.serializer.JsonDeserializer;
+import org.springframework.kafka.support.serializer.JsonSerializer;
 
 import java.util.Map;
 
 @Configuration
 @EnableKafka
-public class KafkaConsumerConfiguration {
+public class KafkaConfiguration {
 
     private final String BOOTSTRAP_SERVERS;
 
-    public KafkaConsumerConfiguration(@Value("${kafka.bootstrap.servers}") String bootstrapServers) {
+    public KafkaConfiguration(@Value("${kafka.bootstrap.servers}") String bootstrapServers) {
         this.BOOTSTRAP_SERVERS = bootstrapServers;
     }
 
@@ -61,4 +67,19 @@ public class KafkaConsumerConfiguration {
         return containerFactory;
     }
 
+    @Bean
+    public ProducerFactory<String, ExamplePayloadDto> producerFactory() {
+        Map<String, Object> configuration = ImmutableMap.of(
+                ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, BOOTSTRAP_SERVERS,
+                ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, StringSerializer.class,
+                ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, JsonSerializer.class
+        );
+
+        return new DefaultKafkaProducerFactory<>(configuration);
+    }
+
+    @Bean
+    public KafkaTemplate<String, ExamplePayloadDto> kafkaTemplate() {
+        return new KafkaTemplate<>(producerFactory());
+    }
 }

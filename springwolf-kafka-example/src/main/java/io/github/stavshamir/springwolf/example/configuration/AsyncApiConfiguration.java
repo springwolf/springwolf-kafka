@@ -1,11 +1,14 @@
 package io.github.stavshamir.springwolf.example.configuration;
 
 import com.google.common.collect.ImmutableMap;
+import io.github.stavshamir.springwolf.asyncapi.types.ProducerData;
+import io.github.stavshamir.springwolf.asyncapi.types.channel.operation.bindings.kafka.KafkaOperationBinding;
 import io.github.stavshamir.springwolf.asyncapi.types.info.Info;
 import io.github.stavshamir.springwolf.asyncapi.types.server.Server;
 import io.github.stavshamir.springwolf.configuration.AsyncApiDocket;
 import io.github.stavshamir.springwolf.configuration.EnableAsyncApi;
 import io.github.stavshamir.springwolf.configuration.KafkaProtocolConfiguration;
+import io.github.stavshamir.springwolf.example.dtos.ExamplePayloadDto;
 import org.apache.kafka.clients.producer.ProducerConfig;
 import org.apache.kafka.common.serialization.StringSerializer;
 import org.springframework.beans.factory.annotation.Value;
@@ -40,9 +43,16 @@ public class AsyncApiConfiguration {
                 .title("Springwolf example project")
                 .build();
 
+        ProducerData exampleProducerData = ProducerData.builder()
+                .channelName("example-producer-topic")
+                .binding(ImmutableMap.of("kafka", new KafkaOperationBinding()))
+                .payloadType(ExamplePayloadDto.class)
+                .build();
+
         return AsyncApiDocket.builder()
                 .info(info)
                 .server("kafka", Server.kafka().url(BOOTSTRAP_SERVERS).build())
+                .producer(exampleProducerData)
                 .build();
     }
 

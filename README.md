@@ -22,15 +22,12 @@ Add the following dependencies and configuration class to enable this plugin.
 
 #### Dependencies
 ```groovy
-repositories {
-    jcenter()
-}
 dependencies {
     // Provides the documentation API    
-    implementation 'io.github.stavshamir:springwolf-kafka:0.1.0'
+    implementation 'io.github.springwolf:springwolf-kafka:0.1.1'
     
     // Provides the UI - optional (recommended)
-    runtimeOnly 'io.github.stavshamir:springwolf-ui:0.0.2'
+    runtimeOnly 'io.github.springwolf:springwolf-ui:0.1.1'
 }
 ```
 
@@ -57,10 +54,19 @@ public class AsyncApiConfiguration {
                 .version("1.0.0")
                 .title("Springwolf example project")
                 .build();
+        
+      // Producers are not picked up automatically - if you want them to be included in the asyncapi doc and the UI,
+      // you will need to build a ProducerData and register it in the docket (line 69)
+      ProducerData exampleProducerData = ProducerData.builder()
+              .channelName("example-producer-topic")
+              .binding(ImmutableMap.of("kafka", new KafkaOperationBinding()))
+              .payloadType(ExamplePayloadDto.class)
+              .build();
 
-        return AsyncApiDocket.builder()
+      return AsyncApiDocket.builder()
                 .info(info)
                 .server("kafka", Server.kafka().url(BOOTSTRAP_SERVERS).build())
+                .producer(exampleProducerData)
                 .build();
     }
 
