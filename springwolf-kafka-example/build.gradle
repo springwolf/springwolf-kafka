@@ -7,7 +7,7 @@ plugins {
 }
 
 sourceCompatibility = '1.8'
-version '0.1.0'
+version '0.1.1'
 
 
 repositories {
@@ -46,8 +46,8 @@ docker {
     }
 
     registryCredentials {
-        username = System.getProperty('dockerhub.username')
-        password = System.getProperty('dockerhub.password')
+        username = project.findProperty('dockerhubUsername') ?: ''
+        password = project.findProperty('dockerhubPassword') ?: ''
     }
 }
 
