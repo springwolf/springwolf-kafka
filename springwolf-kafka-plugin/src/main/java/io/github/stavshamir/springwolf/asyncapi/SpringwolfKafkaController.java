@@ -9,7 +9,7 @@ import java.util.Map;
 
 @Slf4j
 @RestController
-@RequestMapping("/asyncapi/kafka")
+@RequestMapping("/springwolf/kafka")
 @RequiredArgsConstructor
 public class SpringwolfKafkaController {
 
