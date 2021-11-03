@@ -24,7 +24,7 @@ repositories {
 }
 
 dependencies {
-    api 'io.github.springwolf:springwolf-core:0.2.0'
+    api 'io.github.springwolf:springwolf-core:0.3.0'
 
     implementation 'org.springframework:spring-web'
     implementation 'org.springframework.kafka:spring-kafka'
