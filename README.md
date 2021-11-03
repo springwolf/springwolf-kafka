@@ -24,10 +24,10 @@ Add the following dependencies and configuration class to enable this plugin.
 ```groovy
 dependencies {
     // Provides the documentation API    
-    implementation 'io.github.springwolf:springwolf-kafka:0.1.1'
+    implementation 'io.github.springwolf:springwolf-kafka:0.2.0'
     
     // Provides the UI - optional (recommended)
-    runtimeOnly 'io.github.springwolf:springwolf-ui:0.1.1'
+    runtimeOnly 'io.github.springwolf:springwolf-ui:0.3.0'
 }
 ```
 
@@ -85,8 +85,8 @@ The basePackage field must be set with the name of the package containing the cl
 annotated methods.
 
 #### Verify
-If you have included the UI dependency, access it with the following url: `localhost:8080/asyncapi-ui.html`.
-If not, try the following endpoint: `localhost:8080/asyncapi/docs`.
+If you have included the UI dependency, access it with the following url: `localhost:8080/springwolf/asyncapi-ui.html`.
+If not, try the following endpoint: `localhost:8080/springwolf/docs`.
 
 
 ### Example Project
