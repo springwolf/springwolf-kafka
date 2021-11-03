@@ -11,6 +11,7 @@ import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringValueResolver;
 
+import java.lang.reflect.Method;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
@@ -56,7 +57,7 @@ public class KafkaChannelsScanner extends AbstractChannelScanner<KafkaListener>
     protected Map<String, ? extends OperationBinding> buildOperationBinding(KafkaListener annotation) {
         String groupId = resolver.resolveStringValue(annotation.groupId());
 
-        if (groupId.isEmpty()) {
+        if (groupId == null || groupId.isEmpty()) {
             log.debug("No group ID found for this listener");
         } else {
             log.debug("Found group id: {}", groupId);
@@ -65,4 +66,17 @@ public class KafkaChannelsScanner extends AbstractChannelScanner<KafkaListener>
         KafkaOperationBinding binding = KafkaOperationBinding.withGroupId(groupId);
         return ImmutableMap.of(KafkaOperationBinding.KAFKA_BINDING_KEY, binding);
     }
+
+    @Override
+    protected Class<?> getPayloadType(Method method) {
+        log.debug("Finding payload type for {}", method.getName());
+
+        Class<?>[] parameterTypes = method.getParameterTypes();
+        if (parameterTypes.length != 1) {
+            throw new IllegalArgumentException("Only single parameter KafkaListener methods are supported");
+        }
+
+        return parameterTypes[0];
+    }
+
 }
