@@ -94,7 +94,7 @@ public class KafkaChannelsScannerTest {
                 .message(message)
                 .build();
 
-        Channel expectedChannel = Channel.builder().subscribe(operation).build();
+        Channel expectedChannel = Channel.builder().publish(operation).build();
 
         assertThat(actualChannels)
                 .containsExactly(Maps.immutableEntry(TOPIC, expectedChannel));
@@ -120,7 +120,7 @@ public class KafkaChannelsScannerTest {
                 .message(message)
                 .build();
 
-        Channel expectedChannel = Channel.builder().subscribe(operation).build();
+        Channel expectedChannel = Channel.builder().publish(operation).build();
 
         assertThat(actualChannels)
                 .containsExactly(Maps.immutableEntry(TOPIC, expectedChannel));
@@ -136,7 +136,7 @@ public class KafkaChannelsScannerTest {
 
         // Then the returned collection contains a correct binding
         Map<String, ? extends OperationBinding> actualBindings = actualChannels.get(TOPIC)
-                .getSubscribe()
+                .getPublish()
                 .getBindings();
 
         List<String> expectedBinding = KafkaOperationBinding
