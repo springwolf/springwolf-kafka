@@ -20,6 +20,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.kafka.annotation.KafkaListener;
+import org.springframework.messaging.handler.annotation.Payload;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit4.SpringRunner;
@@ -31,6 +32,7 @@ import java.util.Set;
 
 import static java.util.Collections.singleton;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.when;
 
@@ -150,6 +152,47 @@ public class KafkaChannelsScannerTest {
                 .isEqualTo(Collections.singletonList(ClassWithKafkaListenerAnnotationWithGroupId.GROUP_ID));
     }
 
+    @Test
+    public void scan_componentHasKafkaListenerMethods_multipleParamsWithoutPayloadAnnotation() {
+        // Given a class with a method annotated with KafkaListener:
+        // - The method has more than one parameter
+        // - No parameter is annotated with @Payload
+        setClassToScan(ClassWithKafkaListenerAnnotationMultipleParamsWithoutPayloadAnnotation.class);
+
+        // Then an exception is thrown when scan is called
+        assertThatThrownBy(() -> kafkaChannelsScanner.scan())
+                .isInstanceOf(IllegalArgumentException.class);
+    }
+
+
+    @Test
+    public void scan_componentHasKafkaListenerMethods_multipleParamsWithPayloadAnnotation() {
+        // Given a class with a method annotated with KafkaListener:
+        // - The method has more than one parameter
+        // - There is a parameter is annotated with @Payload
+        setClassToScan(ClassWithKafkaListenerAnnotationMultipleParamsWithPayloadAnnotation.class);
+
+        // When scan is called
+        Map<String, Channel> actualChannels = kafkaChannelsScanner.scan();
+
+        // Then the returned collection contains the channel, and the payload is of the parameter annotated with @Payload
+        Message message = Message.builder()
+                .name(SimpleFoo.class.getName())
+                .title(SimpleFoo.class.getSimpleName())
+                .payload(PayloadReference.fromModelName(SimpleFoo.class.getSimpleName()))
+                .build();
+
+        Operation operation = Operation.builder()
+                .bindings(ImmutableMap.of("kafka", KafkaOperationBinding.withGroupId("")))
+                .message(message)
+                .build();
+
+        Channel expectedChannel = Channel.builder().publish(operation).build();
+
+        assertThat(actualChannels)
+                .containsExactly(Maps.immutableEntry(TOPIC, expectedChannel));
+    }
+
     private static class ClassWithoutKafkaListenerAnnotations {
 
         private void methodWithoutAnnotation() {
@@ -185,6 +228,22 @@ public class KafkaChannelsScannerTest {
         }
 
         private void methodWithoutAnnotation() {
+        }
+
+    }
+
+    private static class ClassWithKafkaListenerAnnotationMultipleParamsWithoutPayloadAnnotation {
+
+        @KafkaListener(topics = TOPIC)
+        private void methodWithAnnotation(SimpleFoo payload, String anotherParam) {
+        }
+
+    }
+
+    private static class ClassWithKafkaListenerAnnotationMultipleParamsWithPayloadAnnotation {
+
+        @KafkaListener(topics = TOPIC)
+        private void methodWithAnnotation(String anotherParam, @Payload SimpleFoo payload) {
         }
 
     }

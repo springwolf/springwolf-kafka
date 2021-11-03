@@ -8,9 +8,11 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.EmbeddedValueResolverAware;
 import org.springframework.kafka.annotation.KafkaListener;
+import org.springframework.messaging.handler.annotation.Payload;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringValueResolver;
 
+import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
 import java.util.Arrays;
 import java.util.List;
@@ -69,14 +71,46 @@ public class KafkaChannelsScanner extends AbstractChannelScanner<KafkaListener>
 
     @Override
     protected Class<?> getPayloadType(Method method) {
-        log.debug("Finding payload type for {}", method.getName());
+        String methodName = String.format("%s::%s", method.getDeclaringClass().getSimpleName(), method.getName());
+        log.debug("Finding payload type for {}", methodName);
 
         Class<?>[] parameterTypes = method.getParameterTypes();
-        if (parameterTypes.length != 1) {
-            throw new IllegalArgumentException("Only single parameter KafkaListener methods are supported");
+        switch (parameterTypes.length) {
+            case 0:
+                throw new IllegalArgumentException("Listener methods must not have 0 parameters: " + methodName);
+            case 1:
+                return parameterTypes[0];
+            default:
+                return getPayloadType(parameterTypes, method.getParameterAnnotations(), methodName);
+        }
+    }
+
+    private Class<?> getPayloadType(Class<?>[] parameterTypes, Annotation[][] parameterAnnotations, String methodName) {
+        int payloadAnnotatedParameterIndex = getPayloadAnnotatedParameterIndex(parameterAnnotations);
+
+        if (payloadAnnotatedParameterIndex == -1) {
+            String msg = "Multi-parameter KafkaListener methods must have one parameter annotated with @Payload, "
+                    + "but none was found: "
+                    + methodName;
+
+            throw new IllegalArgumentException(msg);
         }
 
-        return parameterTypes[0];
+        return parameterTypes[payloadAnnotatedParameterIndex];
+    }
+
+    private int getPayloadAnnotatedParameterIndex(Annotation[][] parameterAnnotations) {
+        for (int i = 0, length = parameterAnnotations.length; i < length; i++) {
+            Annotation[] annotations = parameterAnnotations[i];
+            boolean hasPayloadAnnotation = Arrays.stream(annotations)
+                    .anyMatch(annotation -> annotation instanceof Payload);
+
+            if (hasPayloadAnnotation) {
+                return i;
+            }
+        }
+
+        return -1;
     }
 
 }
