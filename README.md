@@ -2,6 +2,8 @@
 ![springwolf-core](https://github.com/springwolf/springwolf-kafka/workflows/springwolf-kafka/badge.svg)
 [![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)
 
+**This repository is now maintained inside the [springwolf-core monorepo](https://github.com/springwolf/springwolf-core/tree/master/springwolf-plugins/springwolf-kafka-plugin)**.
+
 # Springwolf Kafka Plugin
 ##### Automated documentation for Spring Boot application with Kafka consumers
 
